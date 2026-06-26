@@ -126,7 +126,8 @@ ggplot(pulsar, aes(x = target, fill = factor(target))) +
   labels = c("0" = "Noise",
                "1" = "Pulsar"))+
   labs(x = "Class",
-       y = "Frequency")
+       y = "Frequency")+
+  theme_minimal()
 
 ggplot(pulsar, aes(x = mean_profile, fill = factor(target))) +
   geom_density(alpha = 0.6) + 
