@@ -73,4 +73,78 @@ execute:
   message: false
 ---
 
+# Introduction
+
+Pulsars are highly magnetized, fast-spinning neutron stars that emit beams of electromagnetic radiation. As they rotate, these beams sweep across space, and when they point toward Earth, they are detected by our radio telescopes as brief, periodic pulses. Discovering these cosmic objects is crucial for astronomers, as pulsars act as natural cosmic clocks that help us test theories of gravity and understand the interstellar medium.
+
+However, hunting for pulsars is like finding a needle in a cosmic haystack. Modern radio telescopes generate terabytes of data every day, and the vast majority of detected signals are not stars at all. They are either random cosmic noise or Radio Frequency Interference (RFI) caused by human technology, such as satellites, cell towers, and electronics. Manually inspecting these signals is impossible, making this a perfect scenario for the application of Machine Learning.
+
+This project utilizes the High Time Resolution Universe Survey (HTRU2) dataset. Instead of raw radio wave files, the dataset provides a set of pre-calculated statistical signatures. When a signal is detected, scientists process it into two distinct formats:
+
+- The Integrated Profile: The shape of the radio pulse after folding the signal multiple times to cancel out random noise.
+
+- The DM-SNR Curve: A curve that shows the Signal-to-Noise Ratio (SNR) across different estimated levels of space dispersion (Dispersion Measure - DM).
+
+For each of these two curves, four statistical moments are extracted: Mean, Standard Deviation, Excess Kurtosis, and Skewness. This provides us with 8 continuous independent variables to represent the geometric shape of the signal.
+
+The primary objective of this report is to develop a robust binary classification model capable of distinguishing true pulsars from RFI and background noise. Because true pulsars are exceptionally rare, the dataset suffers from severe class imbalance. Therefore, this modeling process will prioritize specialized evaluation metrics and resampling techniques to ensure that the elusive pulsar signals are accurately identified without being overshadowed by the overwhelming amount of noise. 
+
+
+```{r echo = FALSE}
+library(readr)
+
+pulsar <- read_csv("D:/modelagem/predicting-pulsars/HTRU_2.csv", col_names = FALSE)
+
+colnames(pulsar) <- c(
+  "mean_profile",      # Média do Perfil Integrado
+  "sd_profile",        # Desvio Padrão do Perfil Integrado
+  "kurtosis_profile",  # Excesso de Curtose do Perfil Integrado
+  "skewness_profile",  # Assimetria do Perfil Integrado
+  "mean_dmsnr",        # Média da Curva DM-SNR
+  "sd_dmsnr",          # Desvio Padrão da Curva DM-SNR
+  "kurtosis_dmsnr",    # Excesso de Curtose da Curva DM-SNR
+  "skewness_dmsnr",    # Assimetria da Curva DM-SNR
+  "target"             # Classe: 0 (Ruído) ou 1 (Pulsar)
+)
+
+```
+
+## Exploratory Data Analysis (EDA)
+
+At first, let´s investigate our variable of interest, `target`, to see it´s distribution. 
+
+```{r}
+library(ggplot2)
+ggplot(pulsar, aes(x = target, fill = factor(target))) +
+  geom_bar() +
+  scale_fill_manual(
+    name = "Class",
+    values = c(
+    "0" = "tomato",
+    "1" = "steelblue"
+  ),
+  labels = c("0" = "Noise",
+               "1" = "Pulsar"))+
+  labs(x = "Class",
+       y = "Frequency")
+
+ggplot(pulsar, aes(x = mean_profile, fill = factor(target))) +
+  geom_density(alpha = 0.6) + 
+  scale_fill_manual(
+    name = "Class",
+    values = c("0" = "tomato", "1" = "steelblue"),
+    labels = c("0" = "Noise", "1" = "Pulsar")
+  ) +
+  labs(
+    x = "Mean of the integrated profile",
+    y = "Density"
+  ) +
+  theme_minimal()
+
+```
+
+As we can see, the vast majority of the signals are noise, showing the necessity of searching for a model that could help us automate the filtering process, isolating the true pulsars efficiently from the overwhelming amount of background interference.
+
+Furthermore, looking at the density plot, we can observe a clear distinction between the distributions of the two classes. Taking the 'Mean of the integrated profile' as an example, the curves for pulsars and noise show different shapes and centers. This visual separation is highly encouraging, as it indicates that our statistical features carry significant predictive power, allowing a machine learning model to effectively draw boundaries between stars and interference
+
 
