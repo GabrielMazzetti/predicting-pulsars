@@ -1,0 +1,76 @@
+---
+title: "Pulsar analysis"
+author: "Gabriel Sanábio Mazzetti Affonso"
+date: today
+format: 
+  html:
+    toc: true
+    toc-location: left
+    theme:
+      light: journal
+      dark: darkly
+    theme-toggle: true
+    embed-resources: true
+    code-fold: true
+    code-summary: "Exibir Código"
+    header-includes: |
+      <link rel="stylesheet" href="https://cdn.jsdelivr.net/npm/bootstrap-icons@1.11.1/font/bootstrap-icons.css">
+      <style>
+        /* Cria o espaço e o ícone após o sumário */
+        #TOC::after {
+          content: "\F3ED"; /* Código do ícone GitHub no Bootstrap Icons */
+          font-family: "bootstrap-icons";
+          display: block;
+          text-align: center;
+          font-size: 2rem;
+          margin-top: 20px;
+          padding-top: 10px;
+          border-top: 1px solid #dee2e6;
+          cursor: pointer;
+        }
+        
+        /* Torna o ícone clicável */
+        #TOC {
+          position: relative;
+        }
+        
+        #TOC .github-link {
+          position: absolute;
+          bottom: -50px;
+          left: 50%;
+          transform: translateX(-50%);
+          text-decoration: none;
+          color: inherit;
+          font-size: 0.8rem;
+          text-align: center;
+          width: 100%;
+        }
+      </style>
+    include-after-body:
+      text: |
+        <script>
+        document.addEventListener("DOMContentLoaded", function() {
+          var toc = document.querySelector('#TOC');
+          if (toc) {
+            var a = document.createElement('a');
+            a.href = "https://github.com/GabrielMazzetti";
+            a.target = "_blank";
+            a.className = "github-link";
+            toc.appendChild(a);
+            
+            // Faz o ícone (gerado pelo CSS ::after) ser clicável
+            toc.addEventListener('click', function(e) {
+              if (e.offsetY > toc.offsetHeight - 50) {
+                window.open("https://github.com/GabrielMazzetti", "_blank");
+              }
+            });
+          }
+        });
+        </script>
+        
+execute:
+  warning: false
+  message: false
+---
+
+
